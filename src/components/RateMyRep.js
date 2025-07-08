@@ -266,8 +266,8 @@ const RateMyRep = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-700 to-indigo-800 relative overflow-hidden">
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-4">
+      {/* Header - positioned lower to avoid iPhone earpiece */}
+      <div className="absolute top-12 left-0 right-0 z-10 p-4">
         <div className="flex items-center justify-between text-white">
           <div className="flex items-center space-x-2">
             <Star className="h-6 w-6 text-yellow-400" />
@@ -282,8 +282,8 @@ const RateMyRep = () => {
         </div>
       </div>
 
-      {/* Stats Bar */}
-      <div className="absolute top-16 left-4 right-4 z-10">
+      {/* Stats Bar - positioned lower to avoid iPhone earpiece */}
+      <div className="absolute top-20 left-4 right-4 z-10">
         <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center justify-between text-white text-sm">
           <div className="flex items-center space-x-4">
             <span>👍 {userStats.approvalRating}% avg</span>
@@ -294,7 +294,7 @@ const RateMyRep = () => {
       </div>
 
       {/* Main Card */}
-      <div className="flex items-center justify-center min-h-screen p-4 pt-32">
+      <div className="flex items-center justify-center min-h-screen p-4 pt-36">
         <div className="relative w-full max-w-sm">
           {/* Card */}
           <div
@@ -348,22 +348,39 @@ const RateMyRep = () => {
                 </span>
               </div>
 
-              {/* Rating badge */}
-              {currentRep.rating && (
-                <div className="absolute bottom-4 left-4">
-                  <div className="bg-black/70 text-white px-2 py-1 rounded-full text-sm flex items-center">
-                    <Star className="h-3 w-3 mr-1 text-yellow-400" />
-                    {currentRep.rating} ({currentRep.totalRatings})
+              {/* Text overlay with proper vertical separation */}
+              <div className="absolute bottom-4 left-4 right-4 space-y-3">
+                {/* Rating badge - Line 1 */}
+                {currentRep.rating && (
+                  <div className="text-center">
+                    <div className="inline-block px-4 py-2 rounded-full text-sm font-semibold text-white" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                      <Star className="h-3 w-3 inline mr-1 text-yellow-400" />
+                      {currentRep.rating} ⭐ {currentRep.totalRatings}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Instructions - Line 2 */}
+                <div className="text-center">
+                  <div className="inline-block px-4 py-2 rounded-full text-xs font-medium text-white" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                    Swipe to see more
                   </div>
                 </div>
-              )}
+                
+                {/* Map hint - Line 3 */}
+                <div className="text-center">
+                  <div className="inline-block px-4 py-2 rounded-full text-xs font-medium text-white" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                    Tap Map to find YOUR rep
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Info */}
             <div className="p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-2xl font-bold text-gray-900">{currentRep.name}</h3>
-                <MapPin className="h-5 w-5 text-gray-500" />
+                <MapPin className="h-5 w-5" style={{ color: '#F59E0B' }} />
               </div>
               
               <p className="text-gray-600 mb-1">
@@ -392,61 +409,63 @@ const RateMyRep = () => {
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => openContactModal(currentRep, 'phone')}
-                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                  className="p-3 bg-green-500 rounded-full hover:bg-green-600 transition-colors"
                 >
-                  <Phone className="h-5 w-5 text-gray-600" />
+                  <Phone className="h-5 w-5 text-white" />
                 </button>
                 
                 <button
                   onClick={() => openContactModal(currentRep, 'email')}
-                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                  className="p-3 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors"
                 >
-                  <Mail className="h-5 w-5 text-gray-600" />
+                  <Mail className="h-5 w-5 text-white" />
                 </button>
                 
                 <button
                   onClick={() => shareRepresentative(currentRep)}
-                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                  className="p-3 bg-purple-500 rounded-full hover:bg-purple-600 transition-colors"
                 >
-                  <Share2 className="h-5 w-5 text-gray-600" />
+                  <Share2 className="h-5 w-5 text-white" />
+                </button>
+                
+                <button
+                  onClick={() => setActiveModal({ type: 'map', rep: currentRep })}
+                  className="p-3 rounded-full transition-colors"
+                  style={{ backgroundColor: '#F59E0B' }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#D97706'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#F59E0B'}
+                >
+                  <MapPin className="h-5 w-5 text-white" />
                 </button>
                 
                 {currentRep.website && (
                   <button
                     onClick={() => window.open(currentRep.website, '_blank')}
-                    className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                    className="p-3 bg-indigo-500 rounded-full hover:bg-indigo-600 transition-colors"
                   >
-                    <Globe className="h-5 w-5 text-gray-600" />
+                    <Globe className="h-5 w-5 text-white" />
                   </button>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Action buttons */}
-          <div className="flex items-center justify-center mt-8 space-x-8">
+          {/* Action buttons - smaller and positioned higher to avoid iPhone earpiece */}
+          <div className="flex items-center justify-center mt-6 space-x-6">
             <button
               onClick={() => handleVote(20, 'dislike')}
-              className="p-4 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transform hover:scale-110 transition-all duration-200"
+              className="p-3 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transform hover:scale-110 transition-all duration-200"
               disabled={isAnimating}
             >
-              <ThumbsDown className="h-6 w-6" />
-            </button>
-            
-            <button
-              onClick={() => handleVote(50, 'neutral')}
-              className="p-3 bg-gray-500 text-white rounded-full shadow-lg hover:bg-gray-600 transform hover:scale-110 transition-all duration-200"
-              disabled={isAnimating}
-            >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
             
             <button
               onClick={() => handleVote(80, 'like')}
-              className="p-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transform hover:scale-110 transition-all duration-200"
+              className="p-3 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transform hover:scale-110 transition-all duration-200"
               disabled={isAnimating}
             >
-              <ThumbsUp className="h-6 w-6" />
+              <Heart className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -488,6 +507,24 @@ const RateMyRep = () => {
                   >
                     Email {activeModal.rep.email}
                   </a>
+                </div>
+              )}
+              
+              {activeModal.type === 'map' && (
+                <div>
+                  <MapPin className="h-8 w-8 mx-auto mb-3 text-orange-500" />
+                  <p className="text-gray-600 mb-4">
+                    Find representatives in your area
+                  </p>
+                  <button
+                    onClick={() => {
+                      // This would typically open a map view or navigate to find representatives
+                      alert('Map feature coming soon! Enter your ZIP code to find your representatives.');
+                    }}
+                    className="block w-full bg-orange-500 text-white py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors"
+                  >
+                    Open Map
+                  </button>
                 </div>
               )}
               
