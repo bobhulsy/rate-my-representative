@@ -11,6 +11,7 @@ export async function onRequestGet(context) {
   const lng = url.searchParams.get('lng');
   const bioguideId = url.searchParams.get('bioguideId');
   const state = url.searchParams.get('state');
+  const zip = url.searchParams.get('zip');
   const limit = parseInt(url.searchParams.get('limit')) || 20;
   
   try {
@@ -23,6 +24,12 @@ export async function onRequestGet(context) {
     // Build filter based on parameters
     if (bioguideId) {
       filterFormula = `{Bioguide_ID} = "${bioguideId}"`;
+    } else if (zip) {
+      // Convert ZIP code to state for filtering
+      const stateFromZip = getStateFromZipCode(zip);
+      if (stateFromZip) {
+        filterFormula = `{State} = "${stateFromZip}"`;
+      }
     } else if (state) {
       filterFormula = `{State} = "${state}"`;
     } else if (lat && lng) {
@@ -302,4 +309,101 @@ function getFallbackOfficials(lat, lng, state, bioguideId) {
       lastUpdated: "2025-07-08"
     }
   ];
+}
+
+function getStateFromZipCode(zipCode) {
+  // Simplified ZIP code to state mapping for common ZIP codes
+  // In production, you'd use a proper ZIP code database
+  const zipToState = {
+    // Major metropolitan areas for testing
+    '90210': 'CA', // Beverly Hills
+    '90211': 'CA', // Beverly Hills
+    '90212': 'CA', // Beverly Hills
+    '10001': 'NY', // New York City
+    '10002': 'NY', // New York City
+    '10003': 'NY', // New York City
+    '60601': 'IL', // Chicago
+    '60602': 'IL', // Chicago
+    '60603': 'IL', // Chicago
+    '20001': 'DC', // Washington DC
+    '20002': 'DC', // Washington DC
+    '20003': 'DC', // Washington DC
+    '75201': 'TX', // Dallas
+    '77001': 'TX', // Houston
+    '33101': 'FL', // Miami
+    '30301': 'GA', // Atlanta
+    '98101': 'WA', // Seattle
+    '02101': 'MA', // Boston
+    '19101': 'PA', // Philadelphia
+    '85001': 'AZ', // Phoenix
+    '80201': 'CO', // Denver
+    '97201': 'OR', // Portland
+  };
+
+  // Direct lookup for common ZIP codes
+  if (zipToState[zipCode]) {
+    return zipToState[zipCode];
+  }
+
+  // Fallback: basic ZIP code range mapping
+  const zip = parseInt(zipCode);
+  
+  if (zip >= 10001 && zip <= 14999) return 'NY';
+  if (zip >= 90001 && zip <= 96699) return 'CA';
+  if (zip >= 60001 && zip <= 62999) return 'IL';
+  if (zip >= 20001 && zip <= 20599) return 'DC';
+  if (zip >= 75001 && zip <= 79999) return 'TX';
+  if (zip >= 33001 && zip <= 34999) return 'FL';
+  if (zip >= 30001 && zip <= 31999) return 'GA';
+  if (zip >= 98001 && zip <= 99499) return 'WA';
+  if (zip >= 2001 && zip <= 2799) return 'MA';
+  if (zip >= 19001 && zip <= 19699) return 'PA';
+  if (zip >= 85001 && zip <= 86599) return 'AZ';
+  if (zip >= 80001 && zip <= 81699) return 'CO';
+  if (zip >= 97001 && zip <= 97999) return 'OR';
+
+  // Add more ranges as needed
+  if (zip >= 35001 && zip <= 36999) return 'AL';
+  if (zip >= 99501 && zip <= 99999) return 'AK';
+  if (zip >= 71601 && zip <= 72999) return 'AR';
+  if (zip >= 6001 && zip <= 6999) return 'CT';
+  if (zip >= 19701 && zip <= 19999) return 'DE';
+  if (zip >= 32001 && zip <= 34999) return 'FL';
+  if (zip >= 96701 && zip <= 96999) return 'HI';
+  if (zip >= 83001 && zip <= 83999) return 'ID';
+  if (zip >= 46001 && zip <= 47999) return 'IN';
+  if (zip >= 50001 && zip <= 52999) return 'IA';
+  if (zip >= 66001 && zip <= 67999) return 'KS';
+  if (zip >= 40001 && zip <= 42999) return 'KY';
+  if (zip >= 70001 && zip <= 71599) return 'LA';
+  if (zip >= 3901 && zip <= 4999) return 'ME';
+  if (zip >= 20601 && zip <= 21999) return 'MD';
+  if (zip >= 48001 && zip <= 49999) return 'MI';
+  if (zip >= 55001 && zip <= 56999) return 'MN';
+  if (zip >= 38601 && zip <= 39999) return 'MS';
+  if (zip >= 63001 && zip <= 65999) return 'MO';
+  if (zip >= 59001 && zip <= 59999) return 'MT';
+  if (zip >= 68001 && zip <= 69999) return 'NE';
+  if (zip >= 88901 && zip <= 89999) return 'NV';
+  if (zip >= 3001 && zip <= 3899) return 'NH';
+  if (zip >= 7001 && zip <= 8999) return 'NJ';
+  if (zip >= 87001 && zip <= 88499) return 'NM';
+  if (zip >= 27001 && zip <= 28999) return 'NC';
+  if (zip >= 58001 && zip <= 58999) return 'ND';
+  if (zip >= 43001 && zip <= 45999) return 'OH';
+  if (zip >= 73001 && zip <= 74999) return 'OK';
+  if (zip >= 15001 && zip <= 19699) return 'PA';
+  if (zip >= 2801 && zip <= 2999) return 'RI';
+  if (zip >= 29001 && zip <= 29999) return 'SC';
+  if (zip >= 57001 && zip <= 57999) return 'SD';
+  if (zip >= 37001 && zip <= 38599) return 'TN';
+  if (zip >= 84001 && zip <= 84999) return 'UT';
+  if (zip >= 5001 && zip <= 5999) return 'VT';
+  if (zip >= 22001 && zip <= 24699) return 'VA';
+  if (zip >= 24701 && zip <= 26999) return 'WV';
+  if (zip >= 53001 && zip <= 54999) return 'WI';
+  if (zip >= 82001 && zip <= 83199) return 'WY';
+
+  // Default fallback
+  return 'DC';
 }

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, X, Phone, Mail, Share2, MapPin, User, Users, Star, Zap, Globe, Twitter, Instagram, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Heart, X, Phone, Mail, Share2, MapPin, User, Users, Star, Zap, Globe, Twitter, Instagram, ThumbsUp, ThumbsDown, Settings } from 'lucide-react';
+import LocationEntry from './LocationEntry';
 
 const RateMyRep = () => {
   const [representatives, setRepresentatives] = useState([]);
@@ -13,6 +14,8 @@ const RateMyRep = () => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [userLocation, setUserLocation] = useState(null);
+  const [showLocationEntry, setShowLocationEntry] = useState(true);
+  const [locationDisplay, setLocationDisplay] = useState('');
   
   const [userStats, setUserStats] = useState({
     ratedCount: 0,
@@ -21,26 +24,64 @@ const RateMyRep = () => {
     shareCount: 0
   });
 
-  // Load representatives data from Cloudflare Functions
+  // Check for saved location on mount
   useEffect(() => {
-    loadRepresentativesData();
-    getUserLocation();
+    checkSavedLocation();
   }, []);
 
-  const loadRepresentativesData = async () => {
+  const checkSavedLocation = () => {
+    const savedZip = localStorage.getItem('ratemyrep_zipcode');
+    const savedLocation = localStorage.getItem('ratemyrep_location');
+    
+    if (savedZip && /^\d{5}$/.test(savedZip)) {
+      setLocationDisplay(`ZIP ${savedZip}`);
+      setShowLocationEntry(false);
+      loadRepresentativesData({ type: 'zip', value: savedZip });
+    } else if (savedLocation) {
+      try {
+        const locationData = JSON.parse(savedLocation);
+        setLocationDisplay(`${locationData.city}, ${locationData.state}`);
+        setShowLocationEntry(false);
+        loadRepresentativesData({ type: 'coordinates', value: locationData });
+      } catch (e) {
+        console.error('Error parsing saved location:', e);
+        setShowLocationEntry(true);
+      }
+    }
+  };
+
+  const handleLocationSet = (location) => {
+    if (location.type === 'zip') {
+      setLocationDisplay(`ZIP ${location.value}`);
+    } else if (location.type === 'coordinates' || location.type === 'ip') {
+      setLocationDisplay(`${location.value.city}, ${location.value.state}`);
+    }
+    
+    setShowLocationEntry(false);
+    loadRepresentativesData(location);
+  };
+
+  const loadRepresentativesData = async (location) => {
     try {
       setIsLoading(true);
       
-      // Get user's location first
-      const locationResponse = await fetch('/api/location');
-      const locationData = await locationResponse.json();
+      let apiUrl = '/api/officials';
+      
+      // Build query parameters based on location type
+      if (location.type === 'zip') {
+        apiUrl += `?zip=${location.value}`;
+      } else if (location.type === 'coordinates') {
+        apiUrl += `?lat=${location.value.lat}&lng=${location.value.lng}`;
+      } else if (location.type === 'ip') {
+        apiUrl += `?state=${location.value.stateCode}`;
+      }
       
       // Fetch representatives based on location
-      const repsResponse = await fetch(`/api/officials?lat=${locationData.lat}&lng=${locationData.lng}`);
+      const repsResponse = await fetch(apiUrl);
       const repsData = await repsResponse.json();
       
       setRepresentatives(repsData.representatives || []);
-      setUserLocation(locationData);
+      setUserLocation(location.value);
       setIsLoading(false);
     } catch (error) {
       console.error('Error loading representatives:', error);
@@ -50,22 +91,11 @@ const RateMyRep = () => {
     }
   };
 
-  const getUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.log('Location access denied, using default');
-          // Default to DC area
-          setUserLocation({ lat: 38.9072, lng: -77.0369 });
-        }
-      );
-    }
+  const handleChangeLocation = () => {
+    setShowLocationEntry(true);
+    localStorage.removeItem('ratemyrep_zipcode');
+    localStorage.removeItem('ratemyrep_location');
+    setLocationDisplay('');
   };
 
   const getSampleData = () => [
@@ -103,6 +133,11 @@ const RateMyRep = () => {
 
   const currentRep = representatives[currentRepIndex];
   const cardRef = useRef(null);
+
+  // Show location entry if no location is set
+  if (showLocationEntry) {
+    return <LocationEntry onLocationSet={handleLocationSet} />;
+  }
 
   const handleVote = async (rating, direction) => {
     if (isAnimating || !currentRep) return;
@@ -273,17 +308,28 @@ const RateMyRep = () => {
             <Star className="h-6 w-6 text-yellow-400" />
             <span className="font-bold text-lg">RateMyRep</span>
           </div>
-          <div className="text-sm">
-            <span>{userStats.ratedCount} rated</span>
-            {userLocation && (
-              <span className="ml-2 opacity-75">📍 {userLocation.city || 'Your Area'}</span>
-            )}
+          <button
+            onClick={handleChangeLocation}
+            className="text-sm bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full hover:bg-white/30 transition-colors flex items-center space-x-1"
+          >
+            <Settings className="h-4 w-4" />
+            <span>Change</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Location Display */}
+      <div className="absolute top-16 left-4 right-4 z-10">
+        <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-center">
+          <div className="flex items-center justify-center space-x-2">
+            <MapPin className="h-4 w-4" />
+            <span className="font-medium">Showing representatives for {locationDisplay}</span>
           </div>
         </div>
       </div>
 
       {/* Stats Bar */}
-      <div className="absolute top-16 left-4 right-4 z-10">
+      <div className="absolute top-28 left-4 right-4 z-10">
         <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center justify-between text-white text-sm">
           <div className="flex items-center space-x-4">
             <span>👍 {userStats.approvalRating}% avg</span>
@@ -294,7 +340,7 @@ const RateMyRep = () => {
       </div>
 
       {/* Main Card */}
-      <div className="flex items-center justify-center min-h-screen p-4 pt-32">
+      <div className="flex items-center justify-center min-h-screen p-4 pt-40">
         <div className="relative w-full max-w-sm">
           {/* Card */}
           <div
