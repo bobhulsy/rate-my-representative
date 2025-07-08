@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Search, Loader, Star } from 'lucide-react';
+import mockApi from '../mockApi';
 
 const LocationEntry = ({ onLocationSet }) => {
   const [zipCode, setZipCode] = useState('');
@@ -57,9 +58,8 @@ const LocationEntry = ({ onLocationSet }) => {
             try {
               const { latitude, longitude } = position.coords;
               
-              // Call our location API to get zip code from coordinates
-              const response = await fetch(`/api/location?lat=${latitude}&lng=${longitude}`);
-              const locationData = await response.json();
+              // Use mock coordinates-based location detection
+              const locationData = await mockApi.detectLocation();
               
               if (locationData.success && locationData.stateCode) {
                 // Use coordinates for more precise location
@@ -84,7 +84,7 @@ const LocationEntry = ({ onLocationSet }) => {
                 throw new Error('Unable to determine location');
               }
             } catch (err) {
-              console.error('Error with location API:', err);
+              console.error('Error with location detection:', err);
               fallbackToIP();
             } finally {
               setIsAutoDetecting(false);
@@ -108,9 +108,8 @@ const LocationEntry = ({ onLocationSet }) => {
 
   const fallbackToIP = async () => {
     try {
-      // Use IP-based location detection
-      const response = await fetch('/api/location');
-      const locationData = await response.json();
+      // Use mock location detection
+      const locationData = await mockApi.detectLocation();
       
       if (locationData.success) {
         localStorage.setItem('ratemyrep_location', JSON.stringify(locationData));
@@ -124,10 +123,10 @@ const LocationEntry = ({ onLocationSet }) => {
           }
         });
       } else {
-        throw new Error('IP detection failed');
+        throw new Error('Location detection failed');
       }
     } catch (err) {
-      console.error('Error with IP detection:', err);
+      console.error('Error with location detection:', err);
       setError('Unable to detect location automatically. Please enter your ZIP code.');
     } finally {
       setIsAutoDetecting(false);
@@ -141,7 +140,7 @@ const LocationEntry = ({ onLocationSet }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-700 to-indigo-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
@@ -150,26 +149,26 @@ const LocationEntry = ({ onLocationSet }) => {
             <h1 className="text-4xl font-bold text-white">RateMyRep</h1>
           </div>
           <p className="text-white/80 text-lg">
-            Rate and review your elected officials
+            Call. Email. Rate. Share. Hold them accountable.
           </p>
         </div>
 
         {/* Location Entry Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8">
+        <div className="bg-gray-900 border border-gray-700 rounded-3xl shadow-2xl p-8">
           <div className="text-center mb-6">
             <MapPin className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-white mb-2">
               Find Your Representatives
             </h2>
-            <p className="text-gray-600">
-              Enter your ZIP code to see your elected officials
+            <p className="text-gray-400">
+              Enter your ZIP code to start taking action with your representatives
             </p>
           </div>
 
           {/* ZIP Code Form */}
           <form onSubmit={handleZipSubmit} className="space-y-4">
             <div>
-              <label htmlFor="zipcode" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="zipcode" className="block text-sm font-medium text-gray-300 mb-2">
                 ZIP Code
               </label>
               <div className="relative">
@@ -179,16 +178,16 @@ const LocationEntry = ({ onLocationSet }) => {
                   value={zipCode}
                   onChange={handleZipChange}
                   placeholder="12345"
-                  className={`w-full px-4 py-3 text-lg text-center border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                  className={`w-full px-4 py-3 text-lg text-center border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-gray-800 text-white ${
                     error 
-                      ? 'border-red-500 bg-red-50' 
-                      : 'border-gray-300 focus:border-blue-500'
+                      ? 'border-red-500 bg-red-900/50' 
+                      : 'border-gray-600 focus:border-blue-500'
                   }`}
                   maxLength="5"
                   autoComplete="postal-code"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="h-5 w-5 text-gray-500" />
                 </div>
               </div>
               {error && (

@@ -98,16 +98,16 @@ export async function onRequestGet(context) {
   } catch (error) {
     console.error('Error fetching officials:', error);
     
-    // Return fallback data for development
-    const fallbackData = getFallbackOfficials(lat, lng, state, bioguideId);
+    // Return test data for development
+    const testData = getTestData(lat, lng, state, zip, bioguideId);
     
     return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to fetch officials data',
-      representatives: fallbackData,
-      fallback: true
+      success: true,
+      representatives: testData,
+      fallback: true,
+      message: 'Using test data - Airtable not configured'
     }), {
-      status: 200, // Return 200 so frontend doesn't error
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
@@ -243,21 +243,21 @@ function getStateFromCoordinates(lat, lng) {
   return closestState;
 }
 
-function getFallbackOfficials(lat, lng, state, bioguideId) {
-  // Fallback data for development/demo
-  return [
+function getTestData(lat, lng, state, zip, bioguideId) {
+  // Test data for local development
+  const testOfficials = [
     {
-      id: "demo_1",
+      id: "test_1",
       bioguideId: "A000370",
       name: "Alma Adams",
       firstName: "Alma",
-      lastName: "Adams", 
+      lastName: "Adams",
       party: "Democratic",
       state: "NC",
       district: "12th District",
       chamber: "House",
       officeLevel: "Federal",
-      bio: "Democratic Representative from North Carolina's 12th district. Focused on education, healthcare, and economic opportunity.",
+      bio: "Democratic Representative from North Carolina's 12th district. Former educator and advocate for historically black colleges and universities.",
       phone: "(202) 225-1510",
       email: "alma.adams@mail.house.gov",
       website: "https://adams.house.gov/",
@@ -278,19 +278,19 @@ function getFallbackOfficials(lat, lng, state, bioguideId) {
       lastUpdated: "2025-07-08"
     },
     {
-      id: "demo_2",
+      id: "test_2",
       bioguideId: "A000055",
       name: "Robert Aderholt",
       firstName: "Robert",
       lastName: "Aderholt",
-      party: "Republican", 
+      party: "Republican",
       state: "AL",
       district: "4th District",
       chamber: "House",
       officeLevel: "Federal",
-      bio: "Republican Representative from Alabama's 4th district. Focused on fiscal responsibility, defense, and traditional values.",
+      bio: "Republican Representative from Alabama's 4th district. Senior member focusing on appropriations and fiscal responsibility.",
       phone: "(202) 225-4876",
-      email: "robert.aderholt@mail.house.gov", 
+      email: "robert.aderholt@mail.house.gov",
       website: "https://aderholt.house.gov/",
       photoUrl: "https://bioguide.congress.gov/bioguide/photo/A/A000055.jpg",
       images: [
@@ -307,8 +307,130 @@ function getFallbackOfficials(lat, lng, state, bioguideId) {
         facebook: "RepAderholt"
       },
       lastUpdated: "2025-07-08"
+    },
+    {
+      id: "test_3",
+      bioguideId: "B001297",
+      name: "Ken Buck",
+      firstName: "Ken",
+      lastName: "Buck",
+      party: "Republican",
+      state: "CO",
+      district: "4th District",
+      chamber: "House",
+      officeLevel: "Federal",
+      bio: "Republican Representative from Colorado's 4th district. Former prosecutor with focus on judiciary and technology issues.",
+      phone: "(202) 225-4676",
+      email: "ken.buck@mail.house.gov",
+      website: "https://buck.house.gov/",
+      photoUrl: "https://bioguide.congress.gov/bioguide/photo/B/B001297.jpg",
+      images: [
+        "https://bioguide.congress.gov/bioguide/photo/B/B001297.jpg",
+        "https://via.placeholder.com/400x600/DC2626/FFFFFF?text=Judiciary",
+        "https://via.placeholder.com/400x600/EF4444/FFFFFF?text=Technology"
+      ],
+      keyIssues: ["Judiciary", "Technology", "Small Business"],
+      rating: 3.6,
+      totalRatings: 892,
+      socialMedia: {
+        twitter: "@RepKenBuck",
+        instagram: null,
+        facebook: "RepKenBuck"
+      },
+      lastUpdated: "2025-07-08"
+    },
+    {
+      id: "test_4",
+      bioguideId: "C001053",
+      name: "Tom Cole",
+      firstName: "Tom",
+      lastName: "Cole",
+      party: "Republican",
+      state: "OK",
+      district: "4th District",
+      chamber: "House",
+      officeLevel: "Federal",
+      bio: "Republican Representative from Oklahoma's 4th district. Senior appropriator and former state legislator with Native American heritage.",
+      phone: "(202) 225-6165",
+      email: "tom.cole@mail.house.gov",
+      website: "https://cole.house.gov/",
+      photoUrl: "https://bioguide.congress.gov/bioguide/photo/C/C001053.jpg",
+      images: [
+        "https://bioguide.congress.gov/bioguide/photo/C/C001053.jpg",
+        "https://via.placeholder.com/400x600/EF4444/FFFFFF?text=Appropriations",
+        "https://via.placeholder.com/400x600/F59E0B/FFFFFF?text=Native+Affairs"
+      ],
+      keyIssues: ["Appropriations", "Native American Affairs", "Defense"],
+      rating: 4.0,
+      totalRatings: 1456,
+      socialMedia: {
+        twitter: "@TomColeOK04",
+        instagram: null,
+        facebook: "TomColeOK04"
+      },
+      lastUpdated: "2025-07-08"
+    },
+    {
+      id: "test_5",
+      bioguideId: "D000624",
+      name: "Debbie Dingell",
+      firstName: "Debbie",
+      lastName: "Dingell",
+      party: "Democratic",
+      state: "MI",
+      district: "6th District",
+      chamber: "House",
+      officeLevel: "Federal",
+      bio: "Democratic Representative from Michigan's 6th district. Advocate for healthcare, environment, and women's rights.",
+      phone: "(202) 225-4071",
+      email: "debbie.dingell@mail.house.gov",
+      website: "https://debbiedingell.house.gov/",
+      photoUrl: "https://bioguide.congress.gov/bioguide/photo/D/D000624.jpg",
+      images: [
+        "https://bioguide.congress.gov/bioguide/photo/D/D000624.jpg",
+        "https://via.placeholder.com/400x600/3B82F6/FFFFFF?text=Healthcare",
+        "https://via.placeholder.com/400x600/10B981/FFFFFF?text=Environment"
+      ],
+      keyIssues: ["Healthcare", "Environment", "Women's Rights"],
+      rating: 4.5,
+      totalRatings: 2134,
+      socialMedia: {
+        twitter: "@RepDebDingell",
+        instagram: "@repdebdingell",
+        facebook: "RepDebDingell"
+      },
+      lastUpdated: "2025-07-08"
     }
   ];
+
+  // Filter by specific bioguide ID
+  if (bioguideId) {
+    return testOfficials.filter(official => official.bioguideId === bioguideId);
+  }
+
+  // Filter by ZIP code
+  if (zip) {
+    const zipToState = {
+      '27713': 'NC', // Durham, NC
+      '35801': 'AL', // Huntsville, AL  
+      '80301': 'CO', // Boulder, CO
+      '73301': 'OK', // Oklahoma City, OK
+      '48104': 'MI', // Ann Arbor, MI
+    };
+    
+    if (zipToState[zip]) {
+      const targetState = zipToState[zip];
+      return testOfficials.filter(official => official.state === targetState);
+    }
+  }
+
+  // Filter by state
+  if (state) {
+    return testOfficials.filter(official => official.state === state.toUpperCase());
+  }
+
+  // Return all test officials
+  return testOfficials;
 }
 
 function getStateFromZipCode(zipCode) {

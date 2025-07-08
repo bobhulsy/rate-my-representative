@@ -1,38 +1,83 @@
 # RateMyRep 🏛️⭐
 
-> Swipe, Rate, and Engage with Your Elected Officials
+> Call. Email. Rate. Share. Hold them accountable.
 
-RateMyRep is a modern, mobile-first web application that lets users discover, rate, and engage with their elected officials through an intuitive Tinder-like interface. Built for Cloudflare Pages with Airtable integration.
+RateMyRep is an ACTION-FOCUSED civic engagement platform that empowers citizens to directly engage with their elected officials. More than just browsing - it's a comprehensive tool for political accountability through direct action.
 
-## ✨ Features
+## ✨ Core Actions
 
-- 📱 **Swipe Interface**: Tinder-like experience for rating officials
+### 📞 **CALL** - Direct Action
+- One-tap calling to representatives
+- Track your call history
+- Phone numbers for all offices
+
+### 📧 **EMAIL** - Written Engagement  
+- Pre-written email templates
+- Direct mailto links
+- Track email engagement
+
+### ⭐ **RATE** - Conservative Scoring
+- Rate representatives' conservative record
+- 0-100% conservative scoring system
+- Track voting patterns and positions
+
+### 📱 **SHARE** - Accountability Network
+- Comprehensive share cards with action stats
+- Conservative score highlighting
+- Civic engagement tracking
+- Social media integration
+
+## 🚀 Additional Features
+
+- 📱 **Swipe Interface**: Tinder-like experience for quick rating
 - 🏛️ **Real Official Photos**: Uses bioguide.congress.gov photos
 - 📍 **Location-Based**: Automatically shows your representatives
-- ⭐ **Rating System**: 0-100% approval ratings with analytics
-- 📤 **Social Sharing**: Dynamic Open Graph cards for sharing
-- 📞 **Direct Contact**: Call, email, and website links
+- 📊 **Action Tracking**: Monitor your civic engagement stats
 - 👥 **Staff Directory**: Access to official staff information
-- 📊 **Real-Time Data**: Live ratings and statistics
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 16+
-- Cloudflare account
-- Airtable account
-- Wrangler CLI (`npm install -g wrangler`)
+- Cloudflare account (for production)
+- Airtable account (for production)
+- Wrangler CLI (`npm install -g wrangler`) (for production)
 
-### 1. Setup Project
+### Local Development (Recommended First Step)
 
-```bash
-git clone <your-repo>
-cd rate-my-rep
-npm install
-```
+1. **Setup Project**
+   ```bash
+   git clone <your-repo>
+   cd rate-my-rep
+   npm install
+   ```
 
-### 2. Configure Airtable
+2. **Start Development Server**
+   ```bash
+   npm run dev:local
+   # or
+   npm run start
+   ```
+   The app will run on `http://localhost:3000` with test data included.
+   
+   > **Note**: The server starts automatically and uses mock API data. No Cloudflare or Airtable setup required for local testing!
+
+3. **Test the Application**
+   - Try ZIP codes: `27713` (NC), `35801` (AL), `80301` (CO), `48104` (MI)
+   - Test location auto-detection
+   - Swipe through sample officials (8 included)
+   - Test rating and contact features
+   - API calls will use fallback test data when Airtable is not configured
+
+4. **Troubleshooting**
+   - If you see "Module not found: lucide-react", run: `npm install lucide-react`
+   - Build errors? Run: `npm run build` to check for issues
+   - For API functionality, all endpoints return test data when Airtable is not configured
+
+### Production Setup
+
+### 1. Configure Airtable
 
 1. Create a new Airtable base
 2. Run the setup script for table structures:
@@ -42,7 +87,7 @@ npm install
 3. Get your API key and Base ID from Airtable
 4. Update `wrangler.toml` with your credentials
 
-### 3. Import Data
+### 2. Import Data
 
 ```bash
 # Update paths in import-data.js to point to your CSV files
