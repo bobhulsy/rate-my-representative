@@ -335,43 +335,40 @@ const RateMyRep = () => {
                 </div>
               )}
 
-              {/* Party badge */}
+              {/* Party badge - Large and prominent */}
               <div className="absolute top-4 right-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                <span className={`px-4 py-2 rounded-full text-base font-bold shadow-lg ${
                   currentRep.party === 'Democratic' 
-                    ? 'bg-blue-500 text-white' 
+                    ? 'bg-blue-600 text-white' 
                     : currentRep.party === 'Republican'
-                    ? 'bg-red-500 text-white'
+                    ? 'bg-red-600 text-white'
                     : 'bg-gray-500 text-white'
                 }`}>
-                  {currentRep.party?.substring(0, 3).toUpperCase()}
+                  {currentRep.party === 'Democratic' ? 'DEMOCRAT' : currentRep.party === 'Republican' ? 'REPUBLICAN' : currentRep.party?.toUpperCase()}
                 </span>
               </div>
 
-              {/* Text overlay with proper vertical separation */}
-              <div className="absolute bottom-4 left-4 right-4 space-y-3">
-                {/* Rating badge - Line 1 */}
-                {currentRep.rating && (
-                  <div className="text-center">
-                    <div className="inline-block px-4 py-2 rounded-full text-sm font-semibold text-white" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                      <Star className="h-3 w-3 inline mr-1 text-yellow-400" />
-                      {currentRep.rating} ⭐ {currentRep.totalRatings}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Instructions - Line 2 */}
-                <div className="text-center">
-                  <div className="inline-block px-4 py-2 rounded-full text-xs font-medium text-white" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                    Swipe to see more
+              {/* Rating badge - Bottom left, separate from instructions */}
+              {currentRep.rating && (
+                <div className="absolute bottom-4 left-4">
+                  <div className="inline-block px-4 py-2 rounded-full text-sm font-semibold text-white" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                    <Star className="h-3 w-3 inline mr-1 text-yellow-400" />
+                    {currentRep.rating} ⭐ {currentRep.totalRatings}
                   </div>
                 </div>
-                
-                {/* Map hint - Line 3 */}
-                <div className="text-center">
-                  <div className="inline-block px-4 py-2 rounded-full text-xs font-medium text-white" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                    Tap Map to find YOUR rep
-                  </div>
+              )}
+              
+              {/* Instructions - Bottom center, completely separate */}
+              <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
+                <div className="inline-block px-4 py-2 rounded-full text-xs font-medium text-white text-center" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                  Swipe to see more
+                </div>
+              </div>
+              
+              {/* Map hint - Bottom right, separate from all other elements */}
+              <div className="absolute bottom-4 right-4">
+                <div className="inline-block px-3 py-2 rounded-full text-xs font-medium text-white text-center" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                  Tap Map to find YOUR rep
                 </div>
               </div>
             </div>
