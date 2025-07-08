@@ -1,0 +1,27 @@
+name = "rate-my-rep"
+main = "src/index.js"
+compatibility_date = "2023-12-01"
+
+[env.production]
+vars = { NODE_ENV = "production" }
+
+[build]
+command = "npm run build"
+cwd = "."
+destination = "dist"
+
+[[env.production.vars]]
+# Airtable Configuration
+AIRTABLE_API_KEY = ""
+AIRTABLE_BASE_ID = ""
+AIRTABLE_OFFICIALS_TABLE = "Officials"
+AIRTABLE_STAFF_TABLE = "Staff"
+AIRTABLE_RATINGS_TABLE = "Ratings"
+
+# Social Media
+OG_IMAGE_BASE_URL = "https://rate-my-rep.pages.dev"
+
+# App Configuration
+APP_NAME = "RateMyRep"
+APP_DESCRIPTION = "Rate and review your elected officials"
+APP_URL = "https://rate-my-rep.pages.dev"
